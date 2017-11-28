@@ -1,7 +1,9 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
 import "./App.css";
-import { win32 } from "path";
+import { throttle } from "lodash";
+
+const OFFSET = 50;
+const RESIZE_TIMEOUT = 100;
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -15,8 +17,8 @@ function getColors(count) {
     const red = getRandomInt(0, 255);
     const green = getRandomInt(0, 255);
     const blue = getRandomInt(0, 255);
-    const opacity = getRandomInt(0, 10) * 0.1;
-    const color = `rgba(${red}, ${green}, ${blue}, ${opacity})`;
+    //const opacity = getRandomInt(0, 10) * 0.1;
+    const color = `rgba(${red}, ${green}, ${blue}, ${1})`;
 
     boxData.push(color);
   }
@@ -29,7 +31,10 @@ class App extends React.Component {
     super(props);
 
     const count = Math.floor(
-      Math.min(window.innerHeight / 20, window.innerWidth / 20)
+      Math.min(
+        window.innerHeight / (OFFSET * 2),
+        window.innerWidth / (OFFSET * 2)
+      )
     );
 
     const boxData = getColors(count);
@@ -38,12 +43,15 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    window.onresize = this.resize;
+    window.onresize = throttle(this.resize, RESIZE_TIMEOUT);
   }
 
   resize = () => {
     const count = Math.floor(
-      Math.min(window.innerHeight / 20, window.innerWidth / 20)
+      Math.min(
+        window.innerHeight / (OFFSET * 2),
+        window.innerWidth / (OFFSET * 2)
+      )
     );
 
     if (count < this.state.boxData.length) {
@@ -56,7 +64,7 @@ class App extends React.Component {
 
   render() {
     return this.state.boxData.map((color, index) => (
-      <ColorDiv color={color} offSet={index * 10} />
+      <ColorDiv color={color} offSet={index * OFFSET} />
     ));
   }
 }
@@ -69,12 +77,12 @@ class ColorDiv extends Component {
       position: "fixed",
       backgroundColor: this.props.color,
       left: offSet,
-      right: offSet,
+      right: 0,
       top: offSet,
-      bottom: offSet
+      bottom: 0
     };
 
-    return <div style={style} />;
+    return <div className="color-box" style={style} />;
   }
 }
 
