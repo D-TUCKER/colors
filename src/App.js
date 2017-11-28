@@ -1,6 +1,13 @@
 import React, { Component } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Redirect
+} from "react-router-dom";
+// import { throttle } from "lodash";
+
 import "./App.css";
-import { throttle } from "lodash";
 
 const OFFSET = 50;
 const RESIZE_TIMEOUT = 100;
@@ -37,7 +44,13 @@ class App extends React.Component {
     //   )
     // );
 
-    const boxData = ["red", "blue", "yellow", "orange", "purple"];
+    const boxData = [
+      { text: "red text", color: "red" },
+      { text: "blue text", color: "blue" },
+      { text: "yellow text", color: "yellow" },
+      { text: "orange text", color: "orange" },
+      { text: "purple text", color: "purple" }
+    ];
 
     this.state = { boxData };
   }
@@ -82,11 +95,12 @@ class App extends React.Component {
   // };
 
   render() {
-    return this.state.boxData.map((color, index) => (
+    return this.state.boxData.map((box, index) => (
       <ColorDiv
         boxClicked={this.boxClicked}
         key={this.props.offSet}
-        color={color}
+        color={box.color}
+        text={box.text}
         index={index}
         len={this.state.boxData.length}
       />
@@ -97,6 +111,7 @@ class App extends React.Component {
 class ColorDiv extends Component {
   render() {
     const offSet = this.props.index * 50 || 0;
+    const behind = this.props.index < this.props.len - 1;
 
     const style = {
       position: "fixed",
@@ -105,15 +120,19 @@ class ColorDiv extends Component {
       right: 0,
       top: offSet,
       bottom: 0,
-      cursor: this.props.index < this.props.len - 1 ? "pointer" : ""
+      opacity: behind ? 0.9 : 1,
+      cursor: behind ? "pointer" : ""
     };
 
     return (
       <div
         className="color-box"
+        key={this.props.index}
         style={style}
         onClick={this.props.boxClicked.bind(null, this.props.index)}
-      />
+      >
+        <h2 className="box-text">{this.props.text}</h2>
+      </div>
     );
   }
 }
