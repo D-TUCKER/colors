@@ -30,48 +30,73 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    const count = Math.floor(
-      Math.min(
-        window.innerHeight / (OFFSET * 2),
-        window.innerWidth / (OFFSET * 2)
-      )
-    );
+    // const count = Math.floor(
+    //   Math.min(
+    //     window.innerHeight / (OFFSET * 2),
+    //     window.innerWidth / (OFFSET * 2)
+    //   )
+    // );
 
-    const boxData = getColors(count);
+    const boxData = ["red", "blue", "yellow", "orange", "purple"];
 
     this.state = { boxData };
   }
 
-  componentDidMount() {
-    window.onresize = throttle(this.resize, RESIZE_TIMEOUT);
-  }
+  boxClicked = offSet => {
+    //console.log(offSet, this.state.boxData);
+    const boxData = this.state.boxData.slice();
 
-  resize = () => {
-    const count = Math.floor(
-      Math.min(
-        window.innerHeight / (OFFSET * 2),
-        window.innerWidth / (OFFSET * 2)
-      )
-    );
+    //const index = boxData.length - 1 - offSet;
+    //console.log(offSet, index, this.state.boxData);
 
-    if (count < this.state.boxData.length) {
-      this.setState({ boxData: this.state.boxData.slice(0, count) });
-    } else if (count > this.state.boxData.length) {
-      const diff = count - this.state.boxData.length;
-      this.setState({ boxData: this.state.boxData.concat(getColors(diff)) });
+    if (boxData.length - 1 !== offSet) {
+      const clicked = boxData.splice(offSet, 1);
+      this.setState({
+        boxData: boxData.concat(clicked)
+      });
     }
+
+    // this.setState({
+    //   boxData: [...boxData.slice(index), ...boxData.slice(0, index)]
+    // });
   };
+
+  // componentDidMount() {
+  //   window.onresize = throttle(this.resize, RESIZE_TIMEOUT);
+  // }
+
+  // resize = () => {
+  //   const count = Math.floor(
+  //     Math.min(
+  //       window.innerHeight / (OFFSET * 2),
+  //       window.innerWidth / (OFFSET * 2)
+  //     )
+  //   );
+
+  //   if (count < this.state.boxData.length) {
+  //     this.setState({ boxData: this.state.boxData.slice(0, count) });
+  //   } else if (count > this.state.boxData.length) {
+  //     const diff = count - this.state.boxData.length;
+  //     this.setState({ boxData: this.state.boxData.concat(getColors(diff)) });
+  //   }
+  // };
 
   render() {
     return this.state.boxData.map((color, index) => (
-      <ColorDiv color={color} offSet={index * OFFSET} />
+      <ColorDiv
+        boxClicked={this.boxClicked}
+        key={this.props.offSet}
+        color={color}
+        index={index}
+        len={this.state.boxData.length}
+      />
     ));
   }
 }
 
 class ColorDiv extends Component {
   render() {
-    const offSet = this.props.offSet || 0;
+    const offSet = this.props.index * 50 || 0;
 
     const style = {
       position: "fixed",
@@ -79,10 +104,17 @@ class ColorDiv extends Component {
       left: offSet,
       right: 0,
       top: offSet,
-      bottom: 0
+      bottom: 0,
+      cursor: this.props.index < this.props.len - 1 ? "pointer" : ""
     };
 
-    return <div className="color-box" style={style} />;
+    return (
+      <div
+        className="color-box"
+        style={style}
+        onClick={this.props.boxClicked.bind(null, this.props.index)}
+      />
+    );
   }
 }
 
