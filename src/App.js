@@ -99,6 +99,16 @@ class App extends React.Component {
       <Router>
         <div>
           <Route
+            path="/"
+            component={() => (
+              <StackedColors
+                color={this.state.boxData[this.state.boxData.length - 1]}
+                boxData={this.state.boxData}
+                boxClicked={this.boxClicked}
+              />
+            )}
+          />
+          <Route
             path="/:color"
             component={({ match }) => (
               <StackedColors
@@ -154,6 +164,8 @@ class ColorDiv extends Component {
     const offSet = this.props.index * 50 || 0;
     const behind = this.props.index < this.props.len - 1;
 
+    console.log(this.props.index, this.props.len - 1);
+
     const style = {
       position: "fixed",
       backgroundColor: this.props.color,
@@ -165,18 +177,29 @@ class ColorDiv extends Component {
       cursor: behind ? "pointer" : ""
     };
     //console.log(this.props.color);
-    return (
-      <Link to={"/" + this.props.color}>
-        <div
-          className="color-box"
-          key={this.props.index}
-          style={style}
-          //onClick={behind && this.props.boxClicked.bind(null, this.props.index)}
+    if (behind) {
+      return (
+        <Link
+          style={{ textDecoration: "none", color: "black" }}
+          to={"/" + this.props.color}
         >
+          <div
+            className="color-box"
+            key={this.props.index}
+            style={style}
+            //onClick={behind && this.props.boxClicked.bind(null, this.props.index)}
+          >
+            <h2 className="box-text">{this.props.text}</h2>
+          </div>
+        </Link>
+      );
+    } else {
+      return (
+        <div className="color-box" key={this.props.index} style={style}>
           <h2 className="box-text">{this.props.text}</h2>
         </div>
-      </Link>
-    );
+      );
+    }
   }
 }
 
