@@ -95,16 +95,31 @@ class App extends React.Component {
   // };
 
   render() {
-    return this.state.boxData.map((box, index) => (
-      <ColorDiv
-        boxClicked={this.boxClicked}
-        key={this.props.offSet}
-        color={box.color}
-        text={box.text}
-        index={index}
-        len={this.state.boxData.length}
-      />
-    ));
+    return (
+      <Router>
+        <div>
+          {this.state.boxData.map((box, index) => (
+            <Route
+              //path={box.text}
+              render={({ history, location, text }) => {
+                console.log(history, location, text);
+                return (
+                  <ColorDiv
+                    boxClicked={this.boxClicked}
+                    key={this.props.offSet}
+                    color={box.color}
+                    text={box.text}
+                    index={index}
+                    len={this.state.boxData.length}
+                  />
+                );
+              }}
+            />
+          ))}
+          <Redirect from="/" to={this.state.boxData[0].color} />
+        </div>
+      </Router>
+    );
   }
 }
 
@@ -125,14 +140,16 @@ class ColorDiv extends Component {
     };
 
     return (
-      <div
-        className="color-box"
-        key={this.props.index}
-        style={style}
-        onClick={this.props.boxClicked.bind(null, this.props.index)}
-      >
-        <h2 className="box-text">{this.props.text}</h2>
-      </div>
+      <Link to={"/" + this.props.color}>
+        <div
+          className="color-box"
+          key={this.props.index}
+          style={style}
+          //onClick={behind && this.props.boxClicked.bind(null, this.props.index)}
+        >
+          <h2 className="box-text">{this.props.text}</h2>
+        </div>
+      </Link>
     );
   }
 }
