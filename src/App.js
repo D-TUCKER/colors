@@ -98,28 +98,54 @@ class App extends React.Component {
     return (
       <Router>
         <div>
-          {this.state.boxData.map((box, index) => (
-            <Route
-              //path={box.text}
-              render={({ history, location, text }) => {
-                console.log(history, location, text);
-                return (
-                  <ColorDiv
-                    boxClicked={this.boxClicked}
-                    key={this.props.offSet}
-                    color={box.color}
-                    text={box.text}
-                    index={index}
-                    len={this.state.boxData.length}
-                  />
-                );
-              }}
-            />
-          ))}
-          <Redirect from="/" to={this.state.boxData[0].color} />
+          <Route
+            path="/:color"
+            component={({ match }) => (
+              <StackedColors
+                color={match.params.color}
+                boxData={this.state.boxData}
+                boxClicked={this.boxClicked}
+              />
+            )}
+          />
         </div>
       </Router>
     );
+  }
+}
+
+class StackedColors extends React.Component {
+  componentWillReceiveProps;
+
+  render() {
+    const top = this.props.boxData[this.props.boxData.length - 1];
+    const color = this.props.color || top.color;
+
+    let colors;
+
+    if (color !== top.color) {
+      const index = this.props.boxData.findIndex(x => x.color === color);
+
+      const boxData = this.props.boxData.slice();
+
+      const clicked = boxData.splice(index, 1);
+      colors = boxData.concat(clicked);
+    } else {
+      colors = this.props.boxData;
+    }
+
+    console.log(color);
+
+    return colors.map((box, index) => (
+      <ColorDiv
+        //boxClicked={this.props.boxClicked}
+        key={index}
+        color={box.color}
+        text={box.text}
+        index={index}
+        len={this.props.boxData.length}
+      />
+    ));
   }
 }
 
@@ -138,7 +164,7 @@ class ColorDiv extends Component {
       opacity: behind ? 0.9 : 1,
       cursor: behind ? "pointer" : ""
     };
-
+    //console.log(this.props.color);
     return (
       <Link to={"/" + this.props.color}>
         <div
