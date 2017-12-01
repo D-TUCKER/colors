@@ -27,7 +27,7 @@ function getColors(count) {
     //const opacity = getRandomInt(0, 10) * 0.1;
     const color = `rgba(${red}, ${green}, ${blue}, ${1})`;
 
-    boxData.push(color);
+    boxData.push({ text: color, color });
   }
 
   return boxData;
@@ -44,13 +44,15 @@ class App extends React.Component {
     //   )
     // );
 
-    const boxData = [
-      { text: "red text", color: "red" },
-      { text: "blue text", color: "blue" },
-      { text: "yellow text", color: "yellow" },
-      { text: "orange text", color: "orange" },
-      { text: "purple text", color: "purple" }
-    ];
+    // const boxData = [
+    //   { text: "red text", color: "red" },
+    //   { text: "blue text", color: "blue" },
+    //   { text: "yellow text", color: "yellow" },
+    //   { text: "orange text", color: "orange" },
+    //   { text: "purple text", color: "purple" }
+    // ];
+
+    const boxData = getColors(5);
 
     this.state = { boxData };
   }
